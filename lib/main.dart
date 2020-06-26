@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() {
   runApp(
@@ -27,6 +29,9 @@ class FriendlyChatApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: defaultTargetPlatform == TargetPlatform.android
+          ? kDefaultTheme
+          : kIOSTheme,
       title: 'FriendlyChat',
       home: ChatScreen(),
     );
@@ -94,6 +99,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text('Friendly Chat'),
+        elevation:
+            Theme.of(context).platform == TargetPlatform.android ? 4.0 : 0.0,
       ),
       body: Column(
         children: <Widget>[
@@ -135,14 +142,20 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 4.0),
-            child: IconButton(
-              icon: const Icon(Icons.send),
-              onPressed: _isComposing
-                  ? () => _handleSubmitted(_textController.text)
-                  : null,
-            ),
-          )
+              margin: EdgeInsets.symmetric(horizontal: 4.0),
+              child: Theme.of(context).platform == TargetPlatform.android
+                  ? IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: _isComposing
+                          ? () => _handleSubmitted(_textController.text)
+                          : null,
+                    )
+                  : CupertinoButton(
+                      child: Text('Send'),
+                      onPressed: _isComposing
+                          ? () => _handleSubmitted(_textController.text)
+                          : null,
+                    ))
         ]),
       ),
     );
